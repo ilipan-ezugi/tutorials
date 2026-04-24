@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Invaders - Learn RxJS Epics</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+        }
+        .game-container {
+            text-align: center;
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+            color: #00ff88;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 10px 20px;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 5px;
+            font-size: 1.1rem;
+        }
+        .info-item span {
+            color: #00ff88;
+            font-weight: bold;
+        }
+        #gameCanvas {
+            border: 2px solid #00ff88;
+            border-radius: 5px;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+            background: #0a0a0a;
+        }
+        .controls {
+            margin-top: 15px;
+            color: #666;
+            font-size: 0.85rem;
+        }
+        .controls strong {
+            color: #00ff88;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🚀 Space Invaders</h1>
+        <p class="subtitle">Learn RxJS Multiple Epics Coordination - Project 4</p>
+        
+        <div class="game-info">
+            <div class="info-item">Score: <span id="score">0</span></div>
+            <div class="info-item">Lives: <span id="lives">3</span></div>
+            <div class="info-item">Level: <span id="level">1</span></div>
+        </div>
+        
+        <canvas id="gameCanvas" width="600" height="500"></canvas>
+        
+        <div class="controls">
+            <strong>← →</strong> Move | <strong>Space</strong> Fire | <strong>P</strong> Pause
+        </div>
+    </div>
+
+    <script src="game.js" type="module"></script>
+</body>
+</html>

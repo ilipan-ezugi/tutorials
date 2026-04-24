@@ -1,0 +1,21 @@
+{
+  "name": "rxjs-epics-games-tutorial",
+  "version": "1.0.0",
+  "description": "Learn RxJS Epics through building interactive games",
+  "private": true,
+  "scripts": {
+    "start": "echo 'Run npm start in a specific project folder'"
+  },
+  "workspaces": [
+    "projects/*"
+  ],
+  "keywords": [
+    "rxjs",
+    "epics",
+    "games",
+    "tutorial",
+    "learning"
+  ],
+  "author": "",
+  "license": "MIT"
+}

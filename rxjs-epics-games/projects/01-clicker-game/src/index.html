@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clicker Game - Learn RxJS Epics</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+        }
+        .game-container {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00d9ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            color: #888;
+            margin-bottom: 30px;
+        }
+        .score-display {
+            font-size: 4rem;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #00ff88;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+        .score-label {
+            font-size: 1rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+        .click-btn {
+            background: linear-gradient(135deg, #00d9ff 0%, #0099ff 100%);
+            border: none;
+            padding: 20px 50px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fff;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 20px rgba(0, 217, 255, 0.4);
+            margin: 20px 0;
+        }
+        .click-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 30px rgba(0, 217, 255, 0.6);
+        }
+        .click-btn:active {
+            transform: scale(0.95);
+        }
+        .reset-btn {
+            background: transparent;
+            border: 2px solid #ff6b6b;
+            color: #ff6b6b;
+            padding: 10px 30px;
+            font-size: 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 20px;
+        }
+        .reset-btn:hover {
+            background: #ff6b6b;
+            color: #fff;
+        }
+        .info-panel {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            text-align: left;
+        }
+        .info-panel h3 {
+            color: #00d9ff;
+            margin-bottom: 10px;
+        }
+        .info-panel code {
+            background: rgba(0, 217, 255, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🎮 Clicker Game</h1>
+        <p class="subtitle">Learn RxJS Epics - Project 1</p>
+        
+        <p class="score-label">Score</p>
+        <div class="score-display" id="score">0</div>
+        
+        <button class="click-btn" id="clickBtn">CLICK ME!</button>
+        <br>
+        <button class="reset-btn" id="resetBtn">Reset</button>
+        
+        <div class="info-panel">
+            <h3>🔍 Watch the Flow</h3>
+            <p>Open DevTools Console to see the action stream!</p>
+            <p><code>CLICK</code> → <code>Epic filters</code> → <code>INCREMENT_SCORE</code> → <code>State updated</code></p>
+        </div>
+    </div>
+
+    <script src="game.js" type="module"></script>
+</body>
+</html>

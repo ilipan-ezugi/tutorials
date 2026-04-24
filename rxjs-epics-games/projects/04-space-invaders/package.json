@@ -1,0 +1,21 @@
+{
+  "name": "rxjs-epics-space-invaders",
+  "version": "1.0.0",
+  "description": "Learn RxJS multiple epic coordination through Space Invaders game",
+  "main": "src/index.html",
+  "scripts": {
+    "start": "npx serve -l 8080"
+  },
+  "dependencies": {
+    "rxjs": "^7.8.1"
+  },
+  "keywords": [
+    "rxjs",
+    "epics",
+    "merge",
+    "combineLatest",
+    "games"
+  ],
+  "author": "",
+  "license": "MIT"
+}
