@@ -4,11 +4,14 @@
   "description": "Learn RxJS Epics through building interactive games",
   "private": true,
   "scripts": {
-    "start": "echo 'Run npm start in a specific project folder'"
+    "start": "echo 'Run: cd projects/01-clicker-game && npm install && npm start'"
   },
   "workspaces": [
     "projects/*"
   ],
+  "devDependencies": {
+    "vite": "^5.0.0"
+  },
   "keywords": [
     "rxjs",
     "epics",

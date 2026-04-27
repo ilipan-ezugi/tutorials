@@ -2,25 +2,18 @@
 // Epics for the Snake game
 // Demonstrates: fromEvent, interval, game loop, keyboard handling
 
-import { fromEvent, interval, merge, Subject } from 'rxjs';
-import { filter, map, takeUntil, distinctUntilChanged, tap, switchMap, take } from 'rxjs/operators';
+// TODO: Import operators and functions:
+// - filter, map, tap, distinctUntilChanged, takeUntil, merge
+// - fromEvent, interval
+import { of, merge } from 'rxjs';
 import { 
     KEY_DOWN, 
     TICK, 
     MOVE_SNAKE, 
-    EAT_FOOD, 
-    COLLISION, 
-    GAME_OVER,
-    SCORE_UPDATE,
-    START_GAME,
-    PAUSE_GAME,
-    RESUME_GAME,
-    logAction
+    GAME_OVER
 } from './actions';
 
-// ============================================
-// Direction mapping
-// ============================================
+// Direction mapping - convert key names to movement vectors
 const DIRECTION_MAP = {
     'ArrowUp': { x: 0, y: -1 },
     'ArrowDown': { x: 0, y: 1 },
@@ -31,97 +24,69 @@ const DIRECTION_MAP = {
 /**
  * keyboardEpic - Handles keyboard input
  * 
- * Converts keydown events into KEY_DOWN actions
- * Uses distinctUntilChanged to prevent rapid direction changes
+ * Your Task:
+ * 1. Use fromEvent(document, 'keydown') to listen for key presses
+ * 2. Filter for arrow keys and space: ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space']
+ * 3. Use tap() to call preventDefault() on arrow keys (stops page scrolling)
+ * 4. Map events to KEY_DOWN actions with payload.key
+ * 5. Use distinctUntilChanged() to prevent duplicate key events
+ *
+ * This is your first use of fromEvent() - connecting DOM to RxJS!
  */
 export const keyboardEpic = (action$) => {
-    return fromEvent(document, 'keydown').pipe(
-        // Only allow arrow keys and space
-        filter(e => ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.key)),
-        
-        // Prevent default scrolling for arrow keys
-        tap(e => {
-            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-                e.preventDefault();
-            }
-        }),
-        
-        // Map to KEY_DOWN action
-        map(e => ({ type: KEY_DOWN, payload: { key: e.key } })),
-        
-        // Prevent duplicate key presses
-        distinctUntilChanged((prev, curr) => prev.payload.key === curr.payload.key)
-    );
+    // TODO: Implement
+    // Return fromEvent(document, 'keydown').pipe(...)
+    return of(); // Placeholder
 };
 
 /**
  * directionEpic - Transforms key presses to movement directions
  * 
- * This epic listens for KEY_DOWN actions and converts them
- * to MOVE_SNAKE actions with direction vectors
+ * Your Task:
+ * 1. Filter for KEY_DOWN actions only
+ * 2. Filter for arrow keys only (not space)
+ * 3. Use DIRECTION_MAP to convert key to direction vector
+ * 4. Transform to MOVE_SNAKE actions with direction payload
+ *
+ * This demonstrates converting one action type to another!
  */
 export const directionEpic = (action$) => {
-    let currentDirection = { x: 1, y: 0 }; // Start moving right
-    
-    return action$.pipe(
-        filter(action => action.type === KEY_DOWN),
-        
-        // Handle pause with space
-        filter(action => action.payload.key === 'Space'),
-        
-        map(action => ({ type: 'TOGGLE_PAUSE' }))
-    );
+    // TODO: Implement
+    // return action$.pipe(
+    //   filter(...),
+    //   filter(...),
+    //   map(...)
+    // )
+    return of(); // Placeholder
 };
 
 /**
  * gameLoopEpic - Creates the game tick loop
  * 
- * Uses interval to create a recurring game tick
- * Emits TICK action at regular intervals
+ * Your Task:
+ * 1. Use interval(150) to create a timer that emits every 150ms
+ * 2. Map each emission to a TICK action
+ * 3. Use takeUntil() to stop when GAME_OVER is received
+ * 4. Log occasionally for debugging (but not every tick!)
+ *
+ * This is the heartbeat of your game!
  */
 export const gameLoopEpic = (action$) => {
-    // Create a subject to control the game loop
-    const stopLoop$ = new Subject();
-    
-    return interval(150).pipe(
-        // Map each tick to a TICK action
-        map(() => ({ type: TICK })),
-        
-        // Stop when game over is triggered
-        takeUntil(action$.pipe(
-            filter(action => action.type === GAME_OVER)
-        )),
-        
-        // Also stop when explicitly stopped
-        takeUntil(stopLoop$)
-    );
+    // TODO: Implement
+    // return interval(150).pipe(
+    //   map(...),
+    //   takeUntil(action$.pipe(filter(...)))
+    // )
+    return of(); // Placeholder
 };
 
 /**
- * collisionDetectionEpic - Checks for collisions
+ * rootEpic - Combines all epics
  * 
- * This would be integrated into the main game logic
- * to detect wall and self collisions
- */
-export const collisionDetectionEpic = (action$) => {
-    return action$.pipe(
-        filter(action => action.type === MOVE_SNAKE),
-        
-        // The actual collision detection happens in game.js
-        // This epic just logs for debugging
-        tap(action => {
-            // Collision detection is handled in the game state
-        })
-    );
-};
-
-/**
- * Root epic - combines all epics
- * In a real app, you'd use merge to combine multiple epic outputs
+ * TODO: Use merge() to combine keyboardEpic, directionEpic, and gameLoopEpic
+ * so they all work together in parallel!
  */
 export const rootEpic = (action$) => {
-    return merge(
-        keyboardEpic(action$),
-        gameLoopEpic(action$)
-    );
+    // TODO: Return merge of all epics
+    return of(); // Placeholder
 };

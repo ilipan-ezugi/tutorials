@@ -1,9 +1,12 @@
 // src/epics.js
 // Epics for Space Invaders game
-// Demonstrates: merge, combineLatest, withLatestFrom, collision detection
+// Demonstrates: merge, coordinating multiple epics, complex interactions
 
-import { fromEvent, interval, merge, Subject, combineLatest } from 'rxjs';
-import { filter, map, takeUntil, distinctUntilChanged, tap, withLatestFrom, delay } from 'rxjs/operators';
+// TODO: Import from rxjs:
+// - fromEvent, interval, merge
+// TODO: Import operators:
+// - filter, map, tap, distinctUntilChanged, takeUntil, withLatestFrom
+import { of, merge } from 'rxjs';
 import { 
     KEY_DOWN, 
     TICK, 
@@ -11,114 +14,127 @@ import {
     MOVE_BULLETS, 
     MOVE_ENEMIES,
     ENEMY_FIRE,
-    COLLISION_DETECTED,
-    ENEMY_DESTROYED,
-    PLAYER_HIT,
-    GAME_OVER,
-    PAUSE_GAME,
-    logAction
+    GAME_OVER
 } from './actions';
 
 /**
  * keyboardEpic - Handles player keyboard input
  * 
- * Converts keydown events into game actions
+ * Your Task:
+ * 1. Use fromEvent(document, 'keydown')
+ * 2. Filter for: 'ArrowLeft', 'ArrowRight', 'Space', 'KeyP'
+ * 3. Prevent default for arrow keys
+ * 4. Transform to KEY_DOWN action with key code
+ * 5. Use distinctUntilChanged to prevent rapid repeats
  */
 export const keyboardEpic = (action$) => {
-    return fromEvent(document, 'keydown').pipe(
-        filter(e => ['ArrowLeft', 'ArrowRight', 'Space', 'KeyP'].includes(e.code)),
-        tap(e => {
-            if (e.code !== 'Space') e.preventDefault();
-        }),
-        map(e => ({ type: KEY_DOWN, payload: { key: e.code } }))
-    );
+    // TODO: Implement
+    return of(); // Placeholder
 };
 
 /**
  * playerMovementEpic - Handles player movement from key presses
+ * 
+ * Your Task:
+ * 1. Filter for KEY_DOWN actions
+ * 2. Filter for 'ArrowLeft' or 'ArrowRight' only
+ * 3. Transform to MOVE_PLAYER action
+ * 4. Include direction: -1 for left, 1 for right
  */
 export const playerMovementEpic = (action$) => {
-    return action$.pipe(
-        filter(action => action.type === KEY_DOWN),
-        filter(action => ['ArrowLeft', 'ArrowRight'].includes(action.payload.key)),
-        map(action => ({
-            type: 'MOVE_PLAYER',
-            payload: { direction: action.payload.key === 'ArrowLeft' ? -1 : 1 }
-        }))
-    );
+    // TODO: Implement
+    return of(); // Placeholder
 };
 
 /**
  * shootingEpic - Handles player shooting
+ * 
+ * Your Task:
+ * 1. Filter for KEY_DOWN actions
+ * 2. Check if action.payload.key === 'Space'
+ * 3. Transform to FIRE action
  */
 export const shootingEpic = (action$) => {
-    return action$.pipe(
-        filter(action => action.type === KEY_DOWN),
-        filter(action => action.payload.key === 'Space'),
-        map(() => ({ type: FIRE }))
-    );
+    // TODO: Implement
+    return of(); // Placeholder
 };
 
 /**
  * gameLoopEpic - Creates the main game tick
+ * 
+ * Your Task:
+ * 1. Use interval(50) for 50ms ticks
+ * 2. Map to TICK action
+ * 3. Stop when GAME_OVER using takeUntil()
  */
 export const gameLoopEpic = (action$) => {
-    return interval(50).pipe(
-        map(() => ({ type: TICK })),
-        takeUntil(action$.pipe(filter(a => a.type === GAME_OVER)))
-    );
+    // TODO: Implement
+    return of(); // Placeholder
 };
 
 /**
  * bulletMovementEpic - Moves player bullets
+ * 
+ * Your Task:
+ * 1. Filter for TICK actions
+ * 2. Map to MOVE_BULLETS action
  */
 export const bulletMovementEpic = (action$) => {
-    return action$.pipe(
-        filter(action => action.type === TICK),
-        map(() => ({ type: MOVE_BULLETS }))
-    );
+    // TODO: Implement
+    return of(); // Placeholder
 };
 
 /**
  * enemyMovementEpic - Moves enemies
+ * 
+ * Your Task:
+ * 1. Filter for TICK actions
+ * 2. Map to MOVE_ENEMIES action
  */
 export const enemyMovementEpic = (action$) => {
-    return action$.pipe(
-        filter(action => action.type === TICK),
-        map(() => ({ type: MOVE_ENEMIES }))
-    );
+    // TODO: Implement
+    return of(); // Placeholder
 };
 
 /**
  * enemyFiringEpic - Random enemy firing
+ * 
+ * Your Task:
+ * 1. Filter for TICK actions
+ * 2. Random chance: Math.random() < 0.02 (2% per tick)
+ * 3. Map to ENEMY_FIRE action
+ *
+ * This creates pseudo-random enemy behavior!
  */
 export const enemyFiringEpic = (action$) => {
-    return action$.pipe(
-        filter(action => action.type === TICK),
-        filter(() => Math.random() < 0.02), // 2% chance per tick
-        map(() => ({ type: ENEMY_FIRE }))
-    );
+    // TODO: Implement
+    return of(); // Placeholder
 };
 
 /**
  * collisionDetectionEpic - Detects bullet-enemy collisions
  * 
- * This demonstrates withLatestFrom - getting the latest state
- * when another action occurs
+ * Your Task:
+ * 1. Filter for MOVE_BULLETS action
+ * 2. Map to CHECK_COLLISIONS action
+ * 3. The actual collision logic happens in game.js
+ *
+ * This epic just triggers collision checks each frame
  */
 export const collisionDetectionEpic = (action$) => {
-    return action$.pipe(
-        filter(action => action.type === MOVE_BULLETS),
-        map(() => ({ type: 'CHECK_COLLISIONS' }))
-    );
+    // TODO: Implement
+    return of(); // Placeholder
 };
 
 /**
  * Root epic - combines all epics using merge
  * 
- * This is the key pattern for coordinating multiple epics!
+ * Your Task:
+ * Use merge() to combine ALL 8 epics
+ * This allows them to work independently but simultaneously!
  */
 export const rootEpic = (action$) => {
+    // TODO: Return merge of all 8 epics
     return merge(
         keyboardEpic(action$),
         playerMovementEpic(action$),
