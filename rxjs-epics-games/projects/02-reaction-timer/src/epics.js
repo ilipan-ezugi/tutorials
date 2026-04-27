@@ -4,14 +4,14 @@
 
 // TODO: Import these operators from rxjs/operators:
 // - filter, map, tap, delay, take
-import { of } from 'rxjs';
-import { 
-    START_GAME, 
-    SHAPE_APPEARED, 
-    CLICKED, 
-    RECORD_TIME, 
+import { of, filter, map, tap, delay, take } from 'rxjs';
+import {
+    START_GAME,
+    SHAPE_APPEARED,
+    CLICKED,
+    RECORD_TIME,
     TOO_EARLY,
-    logAction 
+    logAction
 } from './actions';
 
 /**
@@ -26,13 +26,12 @@ import {
  * This is your first use of the delay() operator!
  */
 export const gameTimerEpic = (action$) => {
-    // TODO: Implement
-    // Hint: action$.pipe(
-    //   filter(...),
-    //   delay(...),
-    //   map(...)
-    // )
-    return of(); // Placeholder
+    return action$.pipe(
+        filter(action => action.type === 'START_GAME'),
+        delay(Math.random() * 4000 + 1000),
+        map(() => ({ type: 'SHAPE_APPEARED' })),
+        tap(() => console.log('%c ⏱️ Shape appeared!', 'color: #00ff88'))
+    );
 };
 
 /**
@@ -48,17 +47,28 @@ export const gameTimerEpic = (action$) => {
  * This demonstrates chaining multiple operations in one epic!
  */
 export const reactionTimerEpic = (action$) => {
-    // TODO: Implement
-    // Create a variable to store the appearance time
     let shapeAppearTime = null;
-    
-    // TODO: Build the pipe:
-    // 1. filter(SHAPE_APPEARED)
-    // 2. tap to set shapeAppearTime = Date.now()
-    // 3. filter(CLICKED)
-    // 4. map to calculate and return RECORD_TIME action
-    
-    return of(); // Placeholder
+
+    // Stream 1: record when shape appears (side effect only, no output)
+    action$.pipe(
+        filter(action => action.type === 'SHAPE_APPEARED'),
+        tap(() => {
+            shapeAppearTime = Date.now();
+            console.log('%c ⏱️ Timer started', 'color: #00ff88');
+        })
+    ).subscribe(); // just runs the side effect
+
+    // Stream 2: when user clicks, calculate time since shape appeared
+    return action$.pipe(
+        filter(action => action.type === 'CLICKED'),
+        filter(() => shapeAppearTime !== null), // safety guard
+        map(() => {
+            const reactionTime = Date.now() - shapeAppearTime;
+            shapeAppearTime = null; // reset for next round
+            console.log(`%c ⚡ Reaction time: ${reactionTime}ms`, 'color: #ffff00');
+            return { type: RECORD_TIME, payload: { ms: reactionTime } };
+        })
+    );
 };
 
 /**
@@ -75,14 +85,26 @@ export const reactionTimerEpic = (action$) => {
  * This is more complex - tracks game state across multiple action types!
  */
 export const tooEarlyEpic = (action$) => {
-    // TODO: Create state flags
     let gameActive = false;
     let shapeVisible = false;
-    
+
+    // Side effect: track START_GAME
+    action$.pipe(
+        filter(action => action.type === 'START_GAME'),
+        tap(() => { gameActive = true; shapeVisible = false; })
+    ).subscribe();
+
+    // Side effect: track SHAPE_APPEARED
+    action$.pipe(
+        filter(action => action.type === 'SHAPE_APPEARED'),
+        tap(() => { shapeVisible = true; })
+    ).subscribe();
+
+    // Output stream: only emit TOO_EARLY on early clicks
     return action$.pipe(
-        // TODO: Implement the full logic
-        // Start with filtering and updating state
-        // Then chain to detect early clicks
+        filter(action => action.type === 'CLICKED'),
+        filter(() => !shapeVisible && gameActive),
+        map(() => ({ type: 'TOO_EARLY' }))
     );
 };
 
@@ -93,5 +115,9 @@ export const tooEarlyEpic = (action$) => {
  */
 export const rootEpic = (action$) => {
     // TODO: Return merge of gameTimerEpic, reactionTimerEpic, and tooEarlyEpic
-    return of(); // Placeholder
+    return merge(
+        gameTimerEpic(action$),
+        reactionTimerEpic(action$),
+        tooEarlyEpic(action$)
+    );
 };
