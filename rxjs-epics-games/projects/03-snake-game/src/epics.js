@@ -5,11 +5,11 @@
 // TODO: Import operators and functions:
 // - filter, map, tap, distinctUntilChanged, takeUntil, merge
 // - fromEvent, interval
-import { of, merge } from 'rxjs';
-import { 
-    KEY_DOWN, 
-    TICK, 
-    MOVE_SNAKE, 
+import { of, filter, map, tap, distinctUntilChanged, takeUntil, merge, fromEvent, interval } from 'rxjs';
+import {
+    KEY_DOWN,
+    TICK,
+    MOVE_SNAKE,
     GAME_OVER
 } from './actions';
 
@@ -36,7 +36,16 @@ const DIRECTION_MAP = {
 export const keyboardEpic = (action$) => {
     // TODO: Implement
     // Return fromEvent(document, 'keydown').pipe(...)
-    return of(); // Placeholder
+    return fromEvent(document, 'keydown').pipe(
+        filter(event => ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(event.key)),
+        tap(event => {
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
+                event.preventDefault();
+            }
+        }),
+        map(event => ({ type: KEY_DOWN, payload: { key: event.key } })),
+        distinctUntilChanged()
+    );
 };
 
 /**
@@ -51,13 +60,11 @@ export const keyboardEpic = (action$) => {
  * This demonstrates converting one action type to another!
  */
 export const directionEpic = (action$) => {
-    // TODO: Implement
-    // return action$.pipe(
-    //   filter(...),
-    //   filter(...),
-    //   map(...)
-    // )
-    return of(); // Placeholder
+    return action$.pipe(
+        filter(action => action.type === KEY_DOWN),
+        filter(action => ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(action.payload.key)),
+        map(action => ({ type: MOVE_SNAKE, payload: { direction: DIRECTION_MAP[action.payload.key] } }))
+    );
 };
 
 /**
@@ -72,12 +79,10 @@ export const directionEpic = (action$) => {
  * This is the heartbeat of your game!
  */
 export const gameLoopEpic = (action$) => {
-    // TODO: Implement
-    // return interval(150).pipe(
-    //   map(...),
-    //   takeUntil(action$.pipe(filter(...)))
-    // )
-    return of(); // Placeholder
+    return interval(150).pipe(
+        map(() => ({ type: TICK })),
+        takeUntil(action$.pipe(filter(action => action.type === GAME_OVER)))
+    );
 };
 
 /**
@@ -87,6 +92,5 @@ export const gameLoopEpic = (action$) => {
  * so they all work together in parallel!
  */
 export const rootEpic = (action$) => {
-    // TODO: Return merge of all epics
-    return of(); // Placeholder
+    return merge(keyboardEpic(action$), directionEpic(action$), gameLoopEpic(action$));
 };
