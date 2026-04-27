@@ -76,7 +76,7 @@ epicOutput$.pipe(
 // ============================================
 function handleAction(action) {
     switch (action.type) {
-        case 'MOVE_PLAYER':
+        case MOVE_PLAYER:
             movePlayer(action.payload.direction);
             break;
         case FIRE:
