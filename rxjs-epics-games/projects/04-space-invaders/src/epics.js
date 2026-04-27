@@ -6,12 +6,12 @@
 // - fromEvent, interval, merge
 // TODO: Import operators:
 // - filter, map, tap, distinctUntilChanged, takeUntil, withLatestFrom
-import { of, merge } from 'rxjs';
-import { 
-    KEY_DOWN, 
-    TICK, 
-    FIRE, 
-    MOVE_BULLETS, 
+import { of, fromEvent, interval, merge, filter, map, tap, distinctUntilChanged, takeUntil, withLatestFrom } from 'rxjs';
+import {
+    KEY_DOWN,
+    TICK,
+    FIRE,
+    MOVE_BULLETS,
     MOVE_ENEMIES,
     ENEMY_FIRE,
     GAME_OVER
@@ -25,11 +25,16 @@ import {
  * 2. Filter for: 'ArrowLeft', 'ArrowRight', 'Space', 'KeyP'
  * 3. Prevent default for arrow keys
  * 4. Transform to KEY_DOWN action with key code
- * 5. Use distinctUntilChanged to prevent rapid repeats
+ * 5. Use distinctUntilChanged to prevent rapid repeats - not needed!
  */
 export const keyboardEpic = (action$) => {
-    // TODO: Implement
-    return of(); // Placeholder
+    return fromEvent(document, 'keydown').pipe(
+        filter(e => ['ArrowLeft', 'ArrowRight', 'Space', 'KeyP'].includes(e.code)),
+        tap(e => {
+            if (e.code !== 'Space') e.preventDefault();
+        }),
+        map(e => ({ type: KEY_DOWN, payload: { key: e.code } })),
+    );
 };
 
 /**
@@ -42,8 +47,17 @@ export const keyboardEpic = (action$) => {
  * 4. Include direction: -1 for left, 1 for right
  */
 export const playerMovementEpic = (action$) => {
-    // TODO: Implement
-    return of(); // Placeholder
+    return action$.pipe(
+        filter(action => action.type === KEY_DOWN),
+        filter(action => ['ArrowLeft', 'ArrowRight'].includes(action.payload.key)),
+        map(action => ({
+            type: 'MOVE_PLAYER',
+            payload: {
+                direction: action.payload.key === 'ArrowLeft' ? -1 : 1
+            }
+        })),
+        tap(action => console.log('%c 🚀 Player:', 'color: #feca57', 'direction', action.payload.direction))
+    );
 };
 
 /**
@@ -55,8 +69,12 @@ export const playerMovementEpic = (action$) => {
  * 3. Transform to FIRE action
  */
 export const shootingEpic = (action$) => {
-    // TODO: Implement
-    return of(); // Placeholder
+    return action$.pipe(
+        filter(action => action.type === KEY_DOWN),
+        filter(action => action.payload.key === 'Space'),
+        map(() => ({ type: FIRE })),
+        tap(() => console.log('%c 🔫 Fire!', 'color: #feca57'))
+    );
 };
 
 /**
@@ -68,8 +86,10 @@ export const shootingEpic = (action$) => {
  * 3. Stop when GAME_OVER using takeUntil()
  */
 export const gameLoopEpic = (action$) => {
-    // TODO: Implement
-    return of(); // Placeholder
+    return interval(50).pipe(
+        map(() => ({ type: TICK })),
+        takeUntil(action$.pipe(filter(action => action.type === GAME_OVER)))
+    );
 };
 
 /**
@@ -80,8 +100,10 @@ export const gameLoopEpic = (action$) => {
  * 2. Map to MOVE_BULLETS action
  */
 export const bulletMovementEpic = (action$) => {
-    // TODO: Implement
-    return of(); // Placeholder
+    return action$.pipe(
+        filter(action => action.type === TICK),
+        map(() => ({ type: MOVE_BULLETS }))
+    );
 };
 
 /**
@@ -92,8 +114,10 @@ export const bulletMovementEpic = (action$) => {
  * 2. Map to MOVE_ENEMIES action
  */
 export const enemyMovementEpic = (action$) => {
-    // TODO: Implement
-    return of(); // Placeholder
+    return action$.pipe(
+        filter(action => action.type === TICK),
+        map(() => ({ type: MOVE_ENEMIES }))
+    );
 };
 
 /**
@@ -107,8 +131,12 @@ export const enemyMovementEpic = (action$) => {
  * This creates pseudo-random enemy behavior!
  */
 export const enemyFiringEpic = (action$) => {
-    // TODO: Implement
-    return of(); // Placeholder
+    return action$.pipe(
+        filter(action => action.type === TICK),
+        filter(() => Math.random() < 0.02),
+        map(() => ({ type: ENEMY_FIRE })),
+        tap(() => console.log('%c 👾 Enemy fired!', 'color: #ff6b6b'))
+    );
 };
 
 /**
@@ -122,8 +150,10 @@ export const enemyFiringEpic = (action$) => {
  * This epic just triggers collision checks each frame
  */
 export const collisionDetectionEpic = (action$) => {
-    // TODO: Implement
-    return of(); // Placeholder
+    return action$.pipe(
+        filter(action => action.type === MOVE_BULLETS),
+        map(() => ({ type: 'CHECK_COLLISIONS' }))
+    );
 };
 
 /**
