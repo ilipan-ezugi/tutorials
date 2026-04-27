@@ -4,7 +4,7 @@
 import { Subject, merge } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { clickEpic, rootEpic } from './epics';
-import { CLICK, INCREMENT_SCORE, RESET, logAction } from './actions';
+import { CLICK, INCREMENT_SCORE, RESET, logAction, clickAction, resetAction } from './actions';
 
 // ============================================
 // STEP 1: Create the Action Stream

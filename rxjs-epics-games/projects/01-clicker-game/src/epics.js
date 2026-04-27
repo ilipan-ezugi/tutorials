@@ -4,7 +4,7 @@
 
 // TODO: Import the necessary operators from rxjs/operators
 // You'll need: filter, map, tap, merge
-import { of, merge } from 'rxjs';
+import { of, merge, filter, map, tap } from 'rxjs';
 import { CLICK, INCREMENT_SCORE, RESET, logAction } from './actions';
 
 /**
@@ -26,7 +26,10 @@ export const clickEpic = (action$) => {
     // TODO: Implement this epic
     // Step 1: Filter for CLICK actions using filter()
     // Step 2: Transform to INCREMENT_SCORE using map()
-    return of(); // Placeholder - replace with your implementation
+    return action$.pipe(
+        filter(action => action.type === CLICK),
+        map(() => ({ type: INCREMENT_SCORE, payload: { points: 1 } }))
+    );
 };
 
 /**
@@ -40,7 +43,10 @@ export const clickEpic = (action$) => {
 export const resetEpic = (action$) => {
     // TODO: Implement this epic
     // Similar pattern to clickEpic, but filter for RESET
-    return of(); // Placeholder - replace with your implementation
+    return action$.pipe(
+        filter(action => action.type === RESET),
+        map(() => ({ type: 'RESET_COMPLETE', payload: {} }))
+    );
 };
 
 /**
